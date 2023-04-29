@@ -1,0 +1,18 @@
+version: '1.0'
+services:
+  json-worker:
+    build:
+      context: ./worker
+      args:
+        - format=json
+  msgpack-worker:
+    build:
+      context: ./worker
+      args:
+        - format=msgpack
+  api:
+    build:
+      context: ./api
+    ports:
+      - 2000:2000/udp
+    

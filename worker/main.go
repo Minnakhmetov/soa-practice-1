@@ -4,12 +4,13 @@ import (
 	"flag"
 	"fmt"
 	"math/rand"
+	"net"
 	"time"
 )
 
 const (
-	testStructFieldLength = 100
-	stringLength          = 100
+	testStructFieldLength = 2
+	stringLength          = 2
 )
 
 type TestStruct struct {
@@ -25,6 +26,7 @@ type TestStruct struct {
 func getTestStruct() TestStruct {
 	r := rand.New(rand.NewSource(424242))
 	testStruct := TestStruct{}
+	testStruct.Integer = r.Int63()
 	testStruct.Str = getRandomString(r, 10)
 	testStruct.Float = r.Float64()
 
@@ -66,7 +68,7 @@ func getAverageExecutionTimeInMs(f func()) int {
 	return sum / iterationCount
 }
 
-func runTest(test Test) string {
+func runTest(test Parser) string {
 	averageSerializationTime := getAverageExecutionTimeInMs(
 		func() { test.Serialize(getTestStruct()) },
 	)
@@ -86,18 +88,40 @@ func runTest(test Test) string {
 	)
 }
 
+func handleConnnection(makeParser func() Parser, conn net.Conn) {
+	defer conn.Close()
+	var parser Parser = makeParser()
+	conn.Write([]byte(runTest(parser)))
+}
+
 func main() {
 	var format = flag.String("format", "json", "serialization format")
 	flag.Parse()
 
-	var test Test
+	conn, err := net.Listen("tcp", ":8000")
 
-	switch *format {
-	case "json":
-		test = MakeJsonTest()
-	default:
-		panic("Unknown format")
+	makeParser := func() Parser {
+		switch *format {
+		case "json":
+			return MakeJsonParser()
+		case "msgpack":
+			return MakeMessagePackParser()
+		default:
+			panic(fmt.Sprintf("Unknown format: %s", *format))
+		}
 	}
 
-	println(runTest(test))
+	if err != nil {
+		panic(err)
+	}
+
+	for {
+		conn, err := conn.Accept()
+
+		if err != nil {
+			panic(err)
+		}
+
+		go handleConnnection(makeParser, conn)
+	}
 }
