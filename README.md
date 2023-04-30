@@ -26,8 +26,9 @@ All supported formats: avro, protobuf, json, msgpack, yaml
 ## Example
 ```
 $ nc -u localhost 2000
-get_result protobuf
+get_result avro
 avro-476-17280us-1608us
 ```
+
 
 
