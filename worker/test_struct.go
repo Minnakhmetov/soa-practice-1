@@ -3,8 +3,8 @@ package main
 import "math/rand"
 
 const (
-	testStructArrayLength = 2
-	stringLength          = 2
+	testStructArrayLength = 10
+	stringLength          = 7
 )
 
 type TestStruct struct {
