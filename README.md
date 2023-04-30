@@ -2,7 +2,7 @@
 
 Make sure you have installed Docker, Docker Compose
 
-# Usage
+# How to use
 
 ## Run server
 
