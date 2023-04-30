@@ -47,7 +47,9 @@ func handleMessage(msg string) string {
 	tokens := strings.Split(strings.Trim(msg, "\n"), " ")
 
 	addExample := func(msg string) string {
-		return fmt.Sprintf("%s\nFor example \"get_result %s\"", msg, getSupportedFormats()[0])
+		supportedFormats := getSupportedFormats()
+		return fmt.Sprintf("%s\nUsage: get_result format\nAll supported formats: %s",
+			msg, strings.Join(supportedFormats, ", "))
 	}
 
 	if tokens[0] != "get_result" {
@@ -63,8 +65,7 @@ func handleMessage(msg string) string {
 	address, ok := formatToWorkerAddress[tokens[1]]
 
 	if !ok {
-		return addExample(fmt.Sprintf("Unknown argument: try one of these: %s",
-			strings.Join(getSupportedFormats(), ", ")))
+		return addExample("Unknown format")
 	}
 
 	return callWorker(address)
