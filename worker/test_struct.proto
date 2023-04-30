@@ -1,0 +1,13 @@
+syntax = "proto3";
+package main;
+option go_package = "github.com/Minnakhmetov/soa-practice-1/worker";
+
+message TestStructPb {
+    string str = 1;
+    int64 integer = 2;
+    double float64 = 3;
+    repeated int64 array_int = 4;
+    repeated double array_float = 5;
+    repeated string array_string = 6;
+    map<string, int64> string_to_int = 7;
+}

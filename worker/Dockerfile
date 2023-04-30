@@ -10,5 +10,8 @@ RUN go mod download && go mod verify
 COPY . .
 RUN go build -v -o /usr/local/bin/app ./...
 
+ARG format=json
 
-CMD ["app", "${format}"]
+ENV FORMAT=$format
+
+CMD app --format=${FORMAT}

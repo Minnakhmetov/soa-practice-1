@@ -1,0 +1,25 @@
+{
+    "type": "record",
+    "name": "TestStruct",
+    "fields": [
+        {"name": "str", "type": "string"},
+        {"name": "integer", "type": "long"},
+        {"name": "float", "type": "double"},
+        {"name": "array_int", "type": {
+            "type": "array",
+            "items": "long"
+        }},
+        {"name": "array_float", "type": {
+            "type": "array",
+            "items": "double"
+        }},
+        {"name": "array_string", "type": {
+            "type": "array",
+            "items": "string"
+        }},
+        {"name": "string_to_int", "type": {
+            "type": "map",
+            "values": "long"
+        }}
+    ]
+}

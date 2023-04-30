@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"net"
 	"strings"
 )
@@ -10,8 +11,11 @@ type Connection struct {
 }
 
 var formatToWorkerAddress map[string]string = map[string]string{
-	"json":    "json-worker:8000",
-	"msgpack": "msgpack-worker:8000",
+	"json":     "json-worker:8000",
+	"msgpack":  "msgpack-worker:8000",
+	"yaml":     "yaml-worker:8000",
+	"avro":     "avro-worker:8000",
+	"protobuf": "protobuf-worker:8000",
 }
 
 func callWorker(address string) string {
@@ -31,23 +35,36 @@ func callWorker(address string) string {
 	return string(buffer)
 }
 
+func getSupportedFormats() []string {
+	var formats []string = make([]string, 0, len(formatToWorkerAddress))
+	for k := range formatToWorkerAddress {
+		formats = append(formats, k)
+	}
+	return formats
+}
+
 func handleMessage(msg string) string {
 	tokens := strings.Split(strings.Trim(msg, "\n"), " ")
 
+	addExample := func(msg string) string {
+		return fmt.Sprintf("%s\nFor example \"get_result %s\"", msg, getSupportedFormats()[0])
+	}
+
 	if tokens[0] != "get_result" {
-		return "Unknown command: did you mean \"get_result\"?"
+		return addExample("Unknown command: did you mean \"get_result\"?")
 	}
 	if len(tokens) > 2 {
-		return "Too many arguments: get_result accepts only one argument"
+		return addExample("Too many arguments: get_result accepts only one argument")
 	}
 	if len(tokens) < 2 {
-		return "Too few arguments: get_result requires an argument"
+		return addExample("Too few arguments: get_result requires an argument")
 	}
 
 	address, ok := formatToWorkerAddress[tokens[1]]
 
 	if !ok {
-		return "Unknown argument"
+		return addExample(fmt.Sprintf("Unknown argument: try one of these: %s",
+			strings.Join(getSupportedFormats(), ", ")))
 	}
 
 	return callWorker(address)

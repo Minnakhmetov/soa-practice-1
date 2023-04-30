@@ -4,12 +4,27 @@ services:
     build:
       context: ./worker
       args:
-        - format=json
+        format: json
   msgpack-worker:
     build:
       context: ./worker
       args:
-        - format=msgpack
+        format: msgpack
+  yaml-worker:
+    build:
+      context: ./worker
+      args:
+        format: yaml
+  avro-worker:
+    build:
+      context: ./worker
+      args:
+        format: avro
+  protobuf-worker:
+    build:
+      context: ./worker
+      args:
+        format: protobuf
   api:
     build:
       context: ./api
